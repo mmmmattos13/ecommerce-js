@@ -1,9 +1,10 @@
 import React from 'react';
-import { Box, Image, Badge, Button, useToast } from '@chakra-ui/react';
+import { Box, Image, Button, useToast } from '@chakra-ui/react';
 import axios from 'axios';
 
 const ProductCard = ({ product, onDelete }) => {
   const toast = useToast(); // Inicializa o Toast
+  
 
   const handleDelete = async () => {
     try {
@@ -32,25 +33,46 @@ const ProductCard = ({ product, onDelete }) => {
     }
   };
 
+  const handleAddToCart = async () => {
+    try {
+      const cartItem = {        
+        quantity: 1, 
+        price: product.price,        
+      };
+
+      await axios.post('http://localhost:3333/carrinho', cartItem);
+
+      // Exibe o Toast de sucesso
+      toast({
+        title: "Produto adicionado ao carrinho.",
+        description: `O produto ${product.productName} foi adicionado ao carrinho com sucesso.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Erro ao adicionar produto ao carrinho:', error.response || error.message);
+
+      // Exibe o Toast de erro
+      toast({
+        title: "Erro ao adicionar ao carrinho.",
+        description: "Não foi possível adicionar o produto ao carrinho. Tente novamente mais tarde.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p="5">
-      <Image src={product.image} alt={product.name} boxSize="200px" objectFit="cover" mx="auto" />
+      <Image src={product.imageUrl} alt={product.name} boxSize="200px" objectFit="cover" mx="auto" />
+  
 
-      <Box p="6">
-        <Box display="flex" alignItems="baseline">
-          {product.isInStock ? (
-            <Badge borderRadius="full" px="2" colorScheme="green">
-              Em estoque
-            </Badge>
-          ) : (
-            <Badge borderRadius="full" px="2" colorScheme="red">
-              Fora de estoque
-            </Badge>
-          )}
-        </Box>
+      <Box p="6">     
 
         <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
-          {product.name}
+          {product.productName}
         </Box>
 
         <Box>
@@ -60,7 +82,11 @@ const ProductCard = ({ product, onDelete }) => {
           </Box>
         </Box>
 
-        <Button mt="4" colorScheme="red" onClick={handleDelete}>
+        <Button mt="4"  colorScheme="teal" onClick={handleAddToCart}>
+          Comprar
+        </Button>
+        
+        <Button mt="4" ml="3" colorScheme="red" onClick={handleDelete}>
           Deletar
         </Button>
       </Box>

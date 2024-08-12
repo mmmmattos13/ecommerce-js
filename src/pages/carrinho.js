@@ -8,7 +8,7 @@ const CartItem = () => {
     return(
         <>
             <Header />
-            <Cart item={"HD"} price={20}/>              
+            <Cart />              
             <CustomButton /> 
             <Footer />            
         </>
